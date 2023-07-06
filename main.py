@@ -17,4 +17,4 @@ def index():
     return render_template('index.html', cpu_temp=cpu_temp)
 
 if __name__ == '__main__':
-    app.run(debug=True, host="rpi.local")
+    app.run(debug=True, host="192.168.1.139")
