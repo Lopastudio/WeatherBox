@@ -8,7 +8,6 @@ import os
 app = Flask(__name__)
 
 def get_cpu_temperature():
-    # Command to get the CPU temperature on a Raspberry Pi
     temp = os.popen("vcgencmd measure_temp").readline()
     return temp.replace("temp=", "")
 
@@ -18,4 +17,4 @@ def index():
     return render_template('index.html', cpu_temp=cpu_temp)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="rpi.local")
