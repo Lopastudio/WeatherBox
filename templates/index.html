@@ -1,13 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>WeatherBox</title>
+    <title>Raspberry Pi CPU Temperature</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1 class="mt-5">WeatherBox</h1>
-        <p class="lead mt-4">Current CPU temperature 🌡️: {{ cpu_temp }}</p>
+        <h1 class="mt-5">Raspberry Pi CPU Temperature</h1>
+        <p class="lead mt-4">Current CPU temperature: {{ cpu_temp }}</p>
+        <div>
+            <canvas id="temperature-chart"></canvas>
+        </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('temperature-chart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Temperature (Celsius)',
+                        data: [],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Timestamp'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Temperature (Celsius)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            function updateChart() {
+                fetch('/temperature_data')
+                    .then(response => response.json())
+                    .then(data => {
+                        chart.data.labels = data.timestamps;
+                        chart.data.datasets[0].data = data.temperatures;
+                        chart.update();
+                    });
+            }
+
+            setInterval(updateChart, 3000); // Update every 3 seconds
+        });
+    </script>
 </body>
 </html>
